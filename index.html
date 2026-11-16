@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Broken Promise - Ukulele Chords</title>
+  <style>
+    :root {
+      /* Soft Ice-Blue & White Neumorphic Palette */
+      --bg: #eaf2fa;
+      --surface: #eaf2fa;
+      --shadow-dark: #c5d4e6;
+      --shadow-light: #ffffff;
+      --text: #1e293b;
+      --muted-text: #475569;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      max-width: 750px;
+      margin: 0 auto;
+      padding: 2.2rem 1.25rem;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Neumorphic Extruded Card */
+    header,
+    .lyric-block {
+      background: var(--surface);
+      border-radius: 20px;
+      box-shadow: 8px 8px 16px var(--shadow-dark),
+                  -8px -8px 16px var(--shadow-light);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+    }
+
+    header {
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.8rem;
+    }
+
+    h1 {
+      margin: 0 0 0.65rem 0;
+      font-size: 2rem;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .header-guide {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 0.75rem 0;
+    }
+
+    /* Neumorphic Inset Pill Badges */
+    .badge-info {
+      background: var(--surface);
+      color: var(--accent-hover);
+      padding: 6px 14px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      box-shadow: inset 3px 3px 6px var(--shadow-dark),
+                  inset -3px -3px 6px var(--shadow-light);
+    }
+
+    .meta {
+      font-size: 0.92rem;
+      color: var(--muted-text);
+      margin-top: 0.65rem;
+    }
+
+    .section-title {
+      font-weight: 700;
+      color: var(--accent-hover);
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      padding-left: 0.4rem;
+      font-size: 0.88rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .lyric-block {
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .line-group {
+      margin-bottom: 1rem;
+    }
+
+    .line-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .chord-row {
+      display: flex;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    /* Neumorphic Tactile Chord Buttons */
+    .chord {
+      display: inline-block;
+      background: var(--surface);
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 0.92rem;
+      padding: 5px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 4px 4px 8px var(--shadow-dark),
+                  -4px -4px 8px var(--shadow-light);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-bottom: 5px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .chord:hover {
+      color: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 5px 5px 10px var(--shadow-dark),
+                  -5px -5px 10px var(--shadow-light);
+    }
+
+    .chord.active-chord {
+      color: #ffffff;
+      background: var(--accent);
+      box-shadow: inset 3px 3px 6px rgba(3, 105, 161, 0.6),
+                  inset -2px -2px 5px rgba(56, 189, 248, 0.4);
+    }
+
+    .lyrics {
+      font-size: 1.05rem;
+      margin: 0;
+      word-wrap: break-word;
+      color: #1e293b;
+    }
+
+    /* Anchored Floating Chord Popover (Directly Beside Clicked Chord) */
+    .chord-popover {
+      display: none;
+      position: absolute;
+      width: 185px;
+      background: var(--surface);
+      padding: 0.9rem 0.8rem;
+      border-radius: 18px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 8px 8px 18px var(--shadow-dark),
+                  -6px -6px 16px var(--shadow-light);
+      z-index: 999;
+      animation: popScale 0.16s ease-out;
+    }
+
+    .chord-popover.active {
+      display: block;
+    }
+
+    @keyframes popScale {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 2px 2px 5px var(--shadow-dark),
+                  -2px -2px 5px var(--shadow-light);
+      font-size: 1.05rem;
+      line-height: 1;
+      cursor: pointer;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-btn:hover {
+      color: #0f172a;
+    }
+
+    .close-btn:active {
+      box-shadow: inset 2px 2px 4px var(--shadow-dark),
+                  inset -2px -2px 4px var(--shadow-light);
+    }
+
+    .chord-title {
+      font-size: 1.45rem;
+      margin: 0 0 0.15rem 0;
+      color: #0f172a;
+      font-weight: 800;
+    }
+
+    .fret-numbers {
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+
+    /* Neumorphic Inset Fretboard Well */
+    #fretboardContainer {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 0.5rem 0.25rem;
+      box-shadow: inset 4px 4px 8px var(--shadow-dark),
+                  inset -4px -4px 8px var(--shadow-light);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Mobile Responsive Adjustments */
+    @media (max-width: 600px) {
+      body {
+        padding: 1.15rem 0.9rem;
+      }
+
+      header {
+        padding: 1.15rem 1.2rem;
+        border-radius: 16px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .badge-info {
+        font-size: 0.84rem;
+        padding: 5px 11px;
+      }
+
+      .section-title {
+        font-size: 0.82rem;
+        margin-top: 1.5rem;
+      }
+
+      .lyric-block {
+        padding: 1.15rem 1.2rem;
+        border-radius: 16px;
+      }
+
+      .chord {
+        padding: 6px 14px;
+        font-size: 0.95rem;
+      }
+
+      .lyrics {
+        font-size: 1rem;
+      }
+
+      .chord-popover {
+        width: 175px;
+        padding: 0.85rem 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Broken Promise</h1>
+    <div class="header-guide">
+      <span class="badge-info">Chords: C - Em - A</span>
+      <span class="badge-info">Strumming Pattern: D D U U D U</span>
+    </div>
+    <div class="meta">
+      <strong>Performed by KimSley</strong> &bull; Ukulele (Standard G-C-E-A)
+    </div>
+  </header>
+
+  <main>
+    <!-- INTRO -->
+    <div class="section-title">[INTRO] &mdash; Chords: C - Em - A | Strumming: D D U U D U</div>
+    <div class="lyric-block">
+      <div class="chord-row">
+        <span class="chord" data-chord="C">C</span>
+        <span class="chord" data-chord="Em">Em</span>
+        <span class="chord" data-chord="A">A</span>
+      </div>
+    </div>
+
+    <!-- VERSE 1 -->
+    <div class="section-title">[VERSE 1] &mdash; Strumming: D D U U D U</div>
+    <div class="lyric-block">
+      <div class="line-group">
+        <span class="chord" data-chord="C">C</span>
+        <p class="lyrics">Two years after we ended what we had</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="Em">Em</span>
+        <p class="lyrics">I am already doing great</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="A">A</span>
+        <p class="lyrics">Living the life that I used to have</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="C">C</span>
+        <p class="lyrics">Before your existence in my life begun</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="C">C</span>
+        <p class="lyrics">I know and I feel that I'm okay</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="Em">Em</span>
+        <p class="lyrics">But some says that I'm not</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="A">A</span>
+        <p class="lyrics">Believe me when I say</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="C">C</span>
+        <p class="lyrics">I'm not lying cross my heart</p>
+      </div>
+    </div>
+
+    <!-- CHORUS 1 -->
+    <div class="section-title">[CHORUS] &mdash; Strumming: D D U U D U</div>
+    <div class="lyric-block">
+      <div class="line-group">
+        <span class="chord" data-chord="C">C</span>
+        <p class="lyrics">But there's something that's holding me back</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="Em">Em</span>
+        <p class="lyrics">And that's the promise that we've had</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="A">A</span>
+        <p class="lyrics">That you'll wait for me and I'll wait for you</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="C">C</span>
+        <p class="lyrics">And for the perfect time for our love</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="C">C</span>
+        <p class="lyrics">Now I see you with another girl</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="Em">Em</span>
+        <p class="lyrics">Looking so happy like we used to look before</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="A">A</span>
+        <p class="lyrics">Now I think, "Is it all worth waiting?"</p>
+      </div>
+      <div class="line-group">
+        <span class="chord" data-chord="C">C</span>
+        <p class="lyrics">If the promise that we had is now a broken promise</p>
+      </div>
+    </div>
+
+    <!-- CHORUS 2 / OUTRO -->
+    <div class="section-title">[CHORUS] &mdash; Strumming: D D U U D U</div>
+    <div class="lyric-block">
+      <div class="line-group">
+        <div class="chord-row">
+          <span class="chord" data-chord="C">C</span>
+          <span class="chord" data-chord="Em">Em</span>
+          <span class="chord" data-chord="A">A</span>
+          <span class="chord" data-chord="C">C</span>
+        </div>
+        <p class="lyrics">But there's something that's holding me back and that's a broken promise now</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ANCHORED FLOATING POPOVER FOR UKULELE CHORD PATTERN -->
+  <div class="chord-popover" id="chordPopover">
+    <button class="close-btn" id="closePopover" title="Close">&times;</button>
+    <h2 class="chord-title" id="popoverChordName">C</h2>
+    <div class="fret-numbers" id="popoverFretText">Frets: 0 - 0 - 0 - 3</div>
+    
+    <!-- Dynamic SVG Ukulele Fretboard -->
+    <div id="fretboardContainer"></div>
+  </div>
+
+  <script>
+    // Chord Database (G - C - E - A strings) for C, Em, and A
+    const chordsData = {
+      "C": {
+        frets: [0, 0, 0, 3],
+        fingers: ["", "", "", "3"]
+      },
+      "Em": {
+        frets: [0, 4, 3, 2],
+        fingers: ["", "3", "2", "1"]
+      },
+      "A": {
+        frets: [2, 1, 0, 0],
+        fingers: ["2", "1", "", ""]
+      }
+    };
+
+    const popover = document.getElementById("chordPopover");
+    const closePopoverBtn = document.getElementById("closePopover");
+    const popoverChordName = document.getElementById("popoverChordName");
+    const popoverFretText = document.getElementById("popoverFretText");
+    const fretboardContainer = document.getElementById("fretboardContainer");
+
+    let activeButton = null;
+
+    // Draw Compact Ukulele Fretboard (SVG)
+    function renderUkuleleSVG(chord) {
+      const strings = ["G", "C", "E", "A"];
+      const numFrets = 5;
+      const width = 148;
+      const height = 165;
+      const startX = 32;
+      const startY = 26;
+      const stringGap = 28;
+      const fretGap = 25;
+
+      let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
+
+      // String labels (G C E A)
+      strings.forEach((label, i) => {
+        const x = startX + i * stringGap;
+        svg += `<text x="${x}" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#475569">${label}</text>`;
+      });
+
+      // Top Nut
+      svg += `<line x1="${startX}" y1="${startY}" x2="${startX + 3 * stringGap}" y2="${startY}" stroke="#0f172a" stroke-width="4" />`;
+
+      // Horizontal Fret Lines
+      for (let f = 1; f <= numFrets; f++) {
+        const y = startY + f * fretGap;
+        svg += `<line x1="${startX}" y1="${y}" x2="${startX + 3 * stringGap}" y2="${y}" stroke="#b8c9dc" stroke-width="1.5" />`;
+        svg += `<text x="14" y="${y - fretGap / 2 + 4}" text-anchor="middle" font-size="10" fill="#64748b">${f}</text>`;
+      }
+
+      // Vertical Strings
+      for (let s = 0; s < 4; s++) {
+        const x = startX + s * stringGap;
+        svg += `<line x1="${x}" y1="${startY}" x2="${x}" y2="${startY + numFrets * fretGap}" stroke="#334155" stroke-width="1.6" />`;
+      }
+
+      // Finger Dots
+      chord.frets.forEach((fret, stringIndex) => {
+        const x = startX + stringIndex * stringGap;
+        if (fret === 0) {
+          svg += `<circle cx="${x}" cy="${startY - 6}" r="3.2" fill="none" stroke="#0f172a" stroke-width="1.4" />`;
+        } else {
+          const y = startY + (fret - 0.5) * fretGap;
+          svg += `<circle cx="${x}" cy="${y}" r="8.5" fill="#0284c7" />`;
+          svg += `<text x="${x}" y="${y + 3.5}" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">${chord.fingers[stringIndex]}</text>`;
+        }
+      });
+
+      svg += `</svg>`;
+      return svg;
+    }
+
+    // Position Popover Directly Beside the Clicked Chord Button (Following Yellow Arrow)
+    function positionPopover(targetBtn) {
+      const btnRect = targetBtn.getBoundingClientRect();
+      const bodyRect = document.body.getBoundingClientRect();
+      const popWidth = popover.offsetWidth;
+      const popHeight = popover.offsetHeight;
+      const viewportWidth = document.documentElement.clientWidth;
+
+      // Coordinates relative to document.body (since body has position: relative)
+      const btnLeftInBody = btnRect.left - bodyRect.left;
+      const btnTopInBody = btnRect.top - bodyRect.top;
+
+      // Place immediately to the right of the clicked chord button
+      let left = btnLeftInBody + btnRect.width + 12;
+
+      // Fallback to below/left if screen is too narrow (e.g., far-right chord on small mobile screen)
+      if (btnRect.right + popWidth + 20 > viewportWidth) {
+        left = Math.max(10, Math.min(btnLeftInBody, bodyRect.width - popWidth - 10));
+      }
+
+      // Vertically center the popover right next to the clicked chord button
+      let top = btnTopInBody + (btnRect.height / 2) - (popHeight / 2);
+
+      // If placed below on narrow mobile, shift down below the button
+      if (btnRect.right + popWidth + 20 > viewportWidth) {
+        top = btnTopInBody + btnRect.height + 8;
+      }
+
+      // Keep within top boundary of body
+      if (top < 10) {
+        top = 10;
+      }
+
+      popover.style.left = `${left}px`;
+      popover.style.top = `${top}px`;
+    }
+
+    function closeChordPopover() {
+      popover.classList.remove("active");
+      if (activeButton) {
+        activeButton.classList.remove("active-chord");
+        activeButton = null;
+      }
+    }
+
+    // Event Listeners for Chord Buttons
+    document.querySelectorAll(".chord").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+
+        if (activeButton === btn && popover.classList.contains("active")) {
+          closeChordPopover();
+          return;
+        }
+
+        if (activeButton) {
+          activeButton.classList.remove("active-chord");
+        }
+
+        const chordName = btn.getAttribute("data-chord");
+        const data = chordsData[chordName];
+        if (!data) return;
+
+        activeButton = btn;
+        btn.classList.add("active-chord");
+
+        popoverChordName.textContent = chordName;
+        popoverFretText.textContent = `Frets: ${data.frets.join(" - ")}`;
+        fretboardContainer.innerHTML = renderUkuleleSVG(data);
+
+        popover.classList.add("active");
+        positionPopover(btn);
+      });
+    });
+
+    popover.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+    closePopoverBtn.addEventListener("click", closeChordPopover);
+    document.addEventListener("click", closeChordPopover);
+
+    window.addEventListener("resize", () => {
+      if (activeButton && popover.classList.contains("active")) {
+        positionPopover(activeButton);
+      }
+    });
+  </script>
+
+</body>
+</html>
